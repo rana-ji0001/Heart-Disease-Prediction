@@ -42,7 +42,7 @@ def load_or_generate():
         df["sex"] = (df["sex"] > 0).astype(int)
         df["cp"] = (np.abs(df["cp"]) % 4).astype(int)
         df["trestbps"] = (np.abs(df["trestbps"]) * 10 + 120).astype(int)
-        df["chol"] = (np.abs[df["chol"]) * 10 + 200).astype(int)
+        df["chol"] = (np.abs(df["chol"]) * 10 + 200).astype(int)
         df["fbs"] = (df["fbs"] > 0).astype(int)
         df["restecg"] = (np.abs(df["restecg"]) % 3).astype(int)
         df["thalach"] = (np.abs(df["thalach"]) * 10 + 120).astype(int)

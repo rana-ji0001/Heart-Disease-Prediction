@@ -1,99 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Prediction Result</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <div class="container">
-    <h1>📊 Prediction Result</h1>
-    <h3>Your Entered Details</h3>
-    <table class="result-table">
-      {% for k, v in inputs.items() %}
-      <tr>
-        <td class="label">{{ k }}</td>
-        <td class="value">{{ v }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Result</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    <div class="result-perc">
-      <strong>{{ percent }}%</strong> chance of Heart Disease
-    </div>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #e0e0e0;
+      }
 
-    <h3>Model Predictions</h3>
-    <table class="result-table">
-      {% for k, v in details.items() %}
-      <tr>
-        <td class="label">{{ k }}</td>
-        <td class="value">{{ v }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: rgba(30, 30, 46, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
 
-    <canvas id="modelChart" style="max-width:600px; margin:20px auto;"></canvas>
-    <h3>Model Accuracies</h3>
-    <canvas id="accuracyChart" style="max-width:600px; margin:20px auto;"></canvas>
+      h1 {
+        font-size: 2.5em;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
 
-    <div style="text-align:center; margin-top:18px;">
-      <a href="{{ url_for('index') }}" class="predict-btn">⬅ Back</a>
-    </div>
-  </div>
+      h3 {
+        color: #667eea;
+        font-size: 1.4em;
+        margin: 30px 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+      }
 
-  <script>
-  // Safely pass Python data to JS using |tojson|safe
-  const chartLabels = {{ chart_labels | default([]) | tojson | safe }};
-  const chartValues = {{ chart_values | default([]) | tojson | safe }};
-  const accLabels = {{ acc_labels | default([]) | tojson | safe }};
-  const accValues = {{ acc_values | default([]) | tojson | safe }};
+      .result-perc {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+        border: 2px solid rgba(102, 126, 234, 0.4);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        margin: 30px 0;
+        animation: fadeIn 0.6s ease-in;
+      }
 
-  const modelCtx = document.getElementById('modelChart').getContext('2d');
-  const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
 
-  new Chart(modelCtx, {
-    type: 'bar',
-    data: {
-      labels: chartLabels,
-      datasets: [{
-        label: 'Predicted Probability (%)',
-        data: chartValues,
-        backgroundColor: ['#1abc9c', '#3498db', '#9b59b6'],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100
+      .result-perc strong {
+        font-size: 3em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .result-table tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .result-table tr:hover {
+        background: rgba(102, 126, 234, 0.08);
+      }
+
+      .result-table tr:last-child {
+        border-bottom: none;
+      }
+
+      .result-table td {
+        padding: 15px 20px;
+      }
+
+      .result-table .label {
+        color: #b0b0c0;
+        font-weight: 600;
+        width: 50%;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .result-table .value {
+        color: #e0e0e0;
+        font-weight: 500;
+        text-align: right;
+      }
+
+      canvas {
+        max-width: 600px;
+        margin: 20px auto;
+        display: block;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .predict-btn {
+        display: inline-block;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-size: 1.1em;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        margin-top: 18px;
+      }
+
+      .predict-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      .predict-btn:active {
+        transform: translateY(0);
+      }
+
+      .chart-container {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 25px 0;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 25px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+
+        .result-perc strong {
+          font-size: 2.5em;
+        }
+
+        canvas {
+          max-width: 100%;
         }
       }
-    }
-  });
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📊 Prediction Result</h1>
+      
+      <h3>Your Entered Details</h3>
+      <table class="result-table">
+        {% for k, v in inputs.items() %}
+        <tr>
+          <td class="label">{{ k }}</td>
+          <td class="value">{{ v }}</td>
+        </tr>
+        {% endfor %}
+      </table>
 
-  new Chart(accuracyCtx, {
-    type: 'bar',
-    data: {
-      labels: accLabels,
-      datasets: [{
-        label: 'Model Accuracy (%)',
-        data: accValues,
-        backgroundColor: ['#e67e22', '#2ecc71', '#e74c3c'],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100
+      <div class="result-perc">
+        <strong>{{ percent }}%</strong> chance of Heart Disease
+      </div>
+
+      <h3>Model Predictions</h3>
+      <table class="result-table">
+        {% for k, v in details.items() %}
+        <tr>
+          <td class="label">{{ k }}</td>
+          <td class="value">{{ v }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <div class="chart-container">
+        <canvas id="modelChart"></canvas>
+      </div>
+
+      <h3>Model Accuracies</h3>
+      <div class="chart-container">
+        <canvas id="accuracyChart"></canvas>
+      </div>
+
+      <div style="text-align: center; margin-top: 18px">
+        <a href="{{ url_for('index') }}" class="predict-btn">⬅ Back</a>
+      </div>
+    </div>
+
+    <script>
+      // Safely pass Python data to JS using |tojson|safe
+      const chartLabels = {{ chart_labels | default([]) | tojson | safe }};
+      const chartValues = {{ chart_values | default([]) | tojson | safe }};
+      const accLabels = {{ acc_labels | default([]) | tojson | safe }};
+      const accValues = {{ acc_values | default([]) | tojson | safe }};
+
+      const modelCtx = document.getElementById('modelChart').getContext('2d');
+      const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+
+      // Enhanced chart configuration
+      const chartConfig = {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            },
+            ticks: {
+              color: '#b0b0c0'
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.05)'
+            },
+            ticks: {
+              color: '#b0b0c0'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#e0e0e0',
+              font: {
+                family: 'Poppins',
+                size: 12
+              }
+            }
+          }
+        },
+        animation: {
+          duration: 1500,
+          easing: 'easeInOutQuart'
         }
-      }
-    }
-  });
-</script>
+      };
 
-</body>
+      new Chart(modelCtx, {
+        type: 'bar',
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: 'Predicted Probability (%)',
+            data: chartValues,
+            backgroundColor: [
+              'rgba(102, 126, 234, 0.8)',
+              'rgba(118, 75, 162, 0.8)',
+              'rgba(86, 204, 242, 0.8)'
+            ],
+            borderColor: [
+              'rgba(102, 126, 234, 1)',
+              'rgba(118, 75, 162, 1)',
+              'rgba(86, 204, 242, 1)'
+            ],
+            borderWidth: 2,
+            borderRadius: 8,
+            hoverBackgroundColor: [
+              'rgba(102, 126, 234, 1)',
+              'rgba(118, 75, 162, 1)',
+              'rgba(86, 204, 242, 1)'
+            ]
+          }]
+        },
+        options: chartConfig
+      });
+
+      new Chart(accuracyCtx, {
+        type: 'bar',
+        data: {
+          labels: accLabels,
+          datasets: [{
+            label: 'Model Accuracy (%)',
+            data: accValues,
+            backgroundColor: [
+              'rgba(230, 126, 34, 0.8)',
+              'rgba(46, 204, 113, 0.8)',
+              'rgba(231, 76, 60, 0.8)'
+            ],
+            borderColor: [
+              'rgba(230, 126, 34, 1)',
+              'rgba(46, 204, 113, 1)',
+              'rgba(231, 76, 60, 1)'
+            ],
+            borderWidth: 2,
+            borderRadius: 8,
+            hoverBackgroundColor: [
+              'rgba(230, 126, 34, 1)',
+              'rgba(46, 204, 113, 1)',
+              'rgba(231, 76, 60, 1)'
+            ]
+          }]
+        },
+        options: chartConfig
+      });
+    </script>
+  </body>
 </html>

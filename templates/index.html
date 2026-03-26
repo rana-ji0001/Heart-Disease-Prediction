@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,7 +16,7 @@
       }
 
       body {
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
         min-height: 100vh;
         padding: 20px;
@@ -48,8 +48,45 @@
       .subtitle {
         text-align: center;
         color: #b0b0c0;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         font-size: 1.1em;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 14px 10px;
+        background: none;
+        border: none;
+        color: #8a8a9e;
+        font-family: "Poppins", sans-serif;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.3s ease;
+      }
+
+      .tab-btn:hover {
+        color: #b0b0c0;
+      }
+
+      .tab-btn.active {
+        color: #667eea;
+        border-bottom: 3px solid #667eea;
+      }
+
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
       }
 
       .upload-section {
@@ -57,19 +94,9 @@
         border: 2px dashed rgba(102, 126, 234, 0.3);
         border-radius: 15px;
         padding: 30px;
-        margin-bottom: 40px;
-        transition: all 0.3s ease;
-      }
-
-      .upload-section:hover {
-        border-color: rgba(102, 126, 234, 0.6);
-        background: rgba(102, 126, 234, 0.12);
-      }
-
-      .upload-section h3 {
-        color: #667eea;
-        margin-bottom: 20px;
-        font-size: 1.3em;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
       }
 
       input[type="file"] {
@@ -81,7 +108,7 @@
         color: #e0e0e0;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-bottom: 15px;
+        font-family: "Poppins", sans-serif;
       }
 
       input[type="file"]:hover {
@@ -102,14 +129,6 @@
       .hint {
         color: #8a8a9e;
         font-size: 0.9em;
-        margin-bottom: 20px;
-      }
-
-      hr {
-        border: none;
-        height: 1px;
-        background: rgba(255, 255, 255, 0.1);
-        margin: 30px 0 0 0;
       }
 
       .form-grid {
@@ -137,7 +156,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         color: #e0e0e0;
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         font-size: 1em;
         transition: all 0.3s ease;
       }
@@ -162,6 +181,7 @@
 
       .predict-btn {
         grid-column: 1 / -1;
+        width: 100%;
         padding: 16px 32px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -172,7 +192,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         margin-top: 10px;
       }
 
@@ -200,13 +220,15 @@
         .container {
           padding: 25px;
         }
-
         h1 {
           font-size: 2em;
         }
-
         .form-grid {
           grid-template-columns: 1fr;
+        }
+        .tab-btn {
+          font-size: 0.85em;
+          padding: 12px 6px;
         }
       }
     </style>
@@ -216,136 +238,193 @@
       <h1>❤️ Heart Disease Predictor</h1>
       <p class="subtitle">Enter your details for risk assessment</p>
 
-      <form
-        action="/predict"
-        method="POST"
-        enctype="multipart/form-data"
-      >
+      <!-- Tab Buttons -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab(event, 'manual')">
+          🖊️ Manual Input
+        </button>
+        <button class="tab-btn" onclick="showTab(event, 'file')">
+          📄 File Input
+        </button>
+        <button class="tab-btn" onclick="showTab(event, 'ecg')">
+          📈 ECG Report
+        </button>
+      </div>
 
-        <!-- Upload Section -->
-        <div class="upload-section">
-          <h3>📄 Upload Patient Report (optional)</h3>
-          <input type="file" name="report_file" accept=".csv,.txt" />
-          <p class="hint">
-            You can upload a .csv or .txt report file with patient details.
-          </p>
-          <!-- Button for file-based prediction -->
-          <button type="submit" name="action" value="file" class="predict-btn">
-            🔍 Predict from File
-          </button>
-          <hr />
-        </div>
+      <!-- TAB 1: Manual Input -->
+      <div class="tab-panel active" id="tab-manual">
+        <form action="/predict" method="POST">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" name="age" min="1" max="120" />
+            </div>
 
-        <!-- Manual Input Section -->
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Age</label>
-            <input type="number" name="age" min="1" max="120" />
+            <div class="form-group">
+              <label>Gender</label>
+              <select name="sex">
+                <option value="">Select</option>
+                <option value="1">Male</option>
+                <option value="0">Female</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Chest Pain Type</label>
+              <select name="cp">
+                <option value="0">Asymptomatic</option>
+                <option value="1">Atypical Angina</option>
+                <option value="2">Non-Anginal Pain</option>
+                <option value="3">Typical Angina</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Resting Blood Pressure</label>
+              <input type="number" name="trestbps" min="80" max="250" />
+            </div>
+
+            <div class="form-group">
+              <label>Cholesterol</label>
+              <input type="number" name="chol" min="100" max="600" />
+            </div>
+
+            <div class="form-group">
+              <label>Fasting Blood Sugar &gt; 120 mg/dl</label>
+              <select name="fbs">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Resting ECG</label>
+              <select name="restecg">
+                <option value="0">Normal</option>
+                <option value="1">ST-T Abnormality</option>
+                <option value="2">LV Hypertrophy</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Maximum Heart Rate</label>
+              <input type="number" name="thalach" min="60" max="250" />
+            </div>
+
+            <div class="form-group">
+              <label>Exercise Induced Angina</label>
+              <select name="exang">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>ST Depression</label>
+              <input type="number" step="0.1" name="oldpeak" min="0" max="10" />
+            </div>
+
+            <div class="form-group">
+              <label>ST Slope</label>
+              <select name="slope">
+                <option value="0">Downsloping</option>
+                <option value="1">Flat</option>
+                <option value="2">Upsloping</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Major Vessels</label>
+              <select name="ca">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Thalassemia</label>
+              <select name="thal">
+                <option value="1">Normal</option>
+                <option value="2">Fixed Defect</option>
+                <option value="3">Reversible Defect</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              name="action"
+              value="manual"
+              class="predict-btn"
+            >
+              🔍 Predict from Manual Input
+            </button>
           </div>
+        </form>
+      </div>
 
-          <div class="form-group">
-            <label>Gender</label>
-            <select name="sex">
-              <option value="">Select</option>
-              <option value="1">Male</option>
-              <option value="0">Female</option>
-            </select>
+      <!-- TAB 2: File Input -->
+      <div class="tab-panel" id="tab-file">
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+          <div class="upload-section">
+            <input type="file" name="report_file" accept=".csv,.txt" />
+            <p class="hint">
+              You can upload a .csv or .txt report file with patient details.
+            </p>
+            <button
+              type="submit"
+              name="action"
+              value="file"
+              class="predict-btn"
+              style="grid-column: unset; margin-top: 0"
+            >
+              🔍 Predict from File
+            </button>
           </div>
+        </form>
+      </div>
 
-          <div class="form-group">
-            <label>Chest Pain Type</label>
-            <select name="cp">
-              <option value="0">Asymptomatic</option>
-              <option value="1">Atypical Angina</option>
-              <option value="2">Non-Anginal Pain</option>
-              <option value="3">Typical Angina</option>
-            </select>
+      <!-- TAB 3: ECG Report -->
+      <div class="tab-panel" id="tab-ecg">
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+          <div class="upload-section">
+            <input
+              type="file"
+              name="ecg_file"
+              accept=".csv,.txt,.png,.jpg,.jpeg,.pdf"
+            />
+            <p class="hint">Upload an ECG report file for analysis.</p>
+            <button
+              type="submit"
+              name="action"
+              value="ecg"
+              class="predict-btn"
+              style="grid-column: unset; margin-top: 0"
+            >
+              🔍 Predict from ECG Report
+            </button>
           </div>
-
-          <div class="form-group">
-            <label>Resting Blood Pressure</label>
-            <input type="number" name="trestbps" min="80" max="250" />
-          </div>
-
-          <div class="form-group">
-            <label>Cholesterol</label>
-            <input type="number" name="chol" min="100" max="600" />
-          </div>
-
-          <div class="form-group">
-            <label>Fasting Blood Sugar > 120 mg/dl</label>
-            <select name="fbs">
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Resting ECG</label>
-            <select name="restecg">
-              <option value="0">Normal</option>
-              <option value="1">ST-T Abnormality</option>
-              <option value="2">LV Hypertrophy</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Maximum Heart Rate</label>
-            <input type="number" name="thalach" min="60" max="250" />
-          </div>
-
-          <div class="form-group">
-            <label>Exercise Induced Angina</label>
-            <select name="exang">
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>ST Depression</label>
-            <input type="number" step="0.1" name="oldpeak" min="0" max="10" />
-          </div>
-
-          <div class="form-group">
-            <label>ST Slope</label>
-            <select name="slope">
-              <option value="0">Downsloping</option>
-              <option value="1">Flat</option>
-              <option value="2">Upsloping</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Major Vessels</label>
-            <select name="ca">
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Thalassemia</label>
-            <select name="thal">
-              <option value="1">Normal</option>
-              <option value="2">Fixed Defect</option>
-              <option value="3">Reversible Defect</option>
-            </select>
-          </div>
-
-          <!-- Button for manual prediction -->
-          <button type="submit" name="action" value="manual" class="predict-btn">
-            🔍 Predict from Manual Input
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
 
       <p class="disclaimer">
         ⚠️ This is a demo model for educational purposes only. Not medical
         advice.
       </p>
     </div>
+
+    <script>
+      function showTab(e, name) {
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("tab-" + name).classList.add("active");
+        e.target.classList.add("active");
+      }
+    </script>
   </body>
 </html>

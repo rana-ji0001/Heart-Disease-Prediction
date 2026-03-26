@@ -7,11 +7,20 @@ import pandas as pd
 import numpy as np
 import os
 import json
-from openai import OpenAI
+
 load_dotenv()
 
 app = Flask(__name__)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+from google import genai
+from google.genai.types import HttpOptions
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY"), http_options=HttpOptions(api_version="v1beta")
+)
+for model in client.models.list():
+    print(model.name)
 
 
 # Load saved artifact
@@ -21,97 +30,73 @@ scaler = artifact["scaler"]
 FEATURE_NAMES = artifact["features"]
 accuracies = artifact["accuracies"]
 
-import openai
+
+import json
+
 
 def extract_features_from_report(report_text):
     """
-    Uses OpenAI GPT to extract required features for heart disease prediction.
-    Returns a dictionary with FEATURE_NAMES as keys.
+    Uses Gemini to extract required features for heart disease prediction.
     """
     prompt = f"""
     You are a medical data assistant that converts a patient’s health report into features for a machine learning model.
-
     From the report below, extract and output ONLY a JSON object with these exact keys:
     {FEATURE_NAMES}
 
-    Here is how each key maps from the medical terms:
-
-    - "Age" → "age"
-    - "Gender" → "sex" (1=Male, 0=Female)
-    - "Chest Pain Type" → "cp" (0=Asymptomatic, 1=Atypical Angina, 2=Non-Anginal Pain, 3=Typical Angina)
-    - "Resting Blood Pressure" → "trestbps"
-    - "Cholesterol" → "chol"
-    - "Fasting Blood Sugar > 120 mg/dl" → "fbs" (1=Yes, 0=No)
-    - "Resting ECG" → "restecg" (2=LV Hypertrophy, 0=Normal, 1=ST-T Abnormality)
-    - "Maximum Heart Rate" → "thalach"
-    - "Exercise Induced Angina" → "exang" (1=Yes, 0=No)
-    - "ST Depression" → "oldpeak"
-    - "ST Slope" → "slope" (0=Downsloping, 1=Flat, 2=Upsloping)
-    - "Major Vessels" → "ca"
-    - "Thalassemia" → "thal" (1=Normal, 2=Fixed Defect, 3=Reversible Defect)
-
     Return ONLY valid JSON — no explanations, no text, no markdown.
-
-    Example output:
-    {{"age": 65, "sex": 1, "cp": 0, "trestbps": 150, "chol": 240, "fbs": 0,
-    "restecg": 1, "thalach": 140, "exang": 0, "oldpeak": 1.5, "slope": 0,
-    "ca": 0, "thal": 1}}
-
     Patient report:
     {report_text}
     """
 
+    try:
+        # UPDATED: Use a model from your working list.
+        # 'gemini-2.0-flash' is highly recommended for this.
+        response = client.models.generate_content(
+            model="gemini-2.0-flash", contents=prompt
+        )
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a medical data assistant that converts a patient’s health report into features for a machine learning model. Output must be valid JSON only."},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0
-    )
+        # In the new SDK, use .text to get the content
+        result_text = response.text.strip()
 
-    result_text = response.choices[0].message.content.strip()
+    except Exception as e:
+        # Remove the nested "gemini-1.0-pro" call entirely as it will always fail.
+        raise ValueError(f"Gemini API Error: {e}")
 
-    # --- 1️⃣ Clean GPT output if wrapped in Markdown ---
-    if result_text.startswith("```"):
-        result_text = result_text.strip("`")
+    # --- Robust JSON Cleaning ---
+    # Removes markdown code blocks if the AI accidentally includes them
+    if "```" in result_text:
+        result_text = result_text.split("```")[1]
         if result_text.lower().startswith("json"):
-            result_text = result_text[4:]
-        result_text = result_text.strip()
+            result_text = result_text[4:].strip()
 
-        # --- 2️⃣ Try to parse JSON ---
     try:
         features = json.loads(result_text)
-        
+    except json.JSONDecodeError:
+        # Fallback if the AI output is messy
+        import re
 
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Failed to parse model output as JSON.\nError: {e}\nGot:\n{result_text}")
+        json_match = re.search(r"\{.*\}", result_text, re.DOTALL)
+        if json_match:
+            features = json.loads(json_match.group())
+        else:
+            raise ValueError(f"Failed to parse JSON: {result_text}")
 
-    # --- ✅ FIX: if GPT returns a list of patients, pick the first ---
     if isinstance(features, list):
-        print(f"⚠️ GPT returned {len(features)} records. Using the first one.")
         features = features[0]
-        print("🔍 Extracted features from report:", features)
 
-    # --- 3️⃣ If it's a string (double encoded JSON), decode again ---
-    if isinstance(features, str):
+    # Ensure data types match what your 'model.pkl' expects
+    final_features = {}
+    for f in FEATURE_NAMES:
+        val = features.get(f, 0)
         try:
-            features = json.loads(features)
-        except json.JSONDecodeError:
-            raise ValueError(f"Model returned nested JSON string: {features}")
+            if f == "oldpeak":
+                final_features[f] = float(val)
+            else:
+                final_features[f] = int(float(val))
+        except (ValueError, TypeError):
+            final_features[f] = 0  # Default to 0 if extraction fails
 
-    # --- 4️⃣ Validate feature keys ---
-    missing = [f for f in FEATURE_NAMES if f not in features]
-    if missing:
-        raise ValueError(f"Missing required features in GPT output: {missing}")
-
-    extra = [f for f in features if f not in FEATURE_NAMES]
-    if extra:
-        print(f"⚠️ Warning: GPT returned extra keys (ignored): {extra}")
-
-    return {f: features[f] for f in FEATURE_NAMES}
-
+    return final_features
 
 
 # Mappings for categorical fields
@@ -139,7 +124,7 @@ MAPPINGS = {
         1: "Normal",
         2: "Fixed Defect",
         3: "Reversible Defect",
-    }
+    },
 }
 
 # Friendly display names
@@ -156,22 +141,26 @@ DISPLAY_NAMES = {
     "oldpeak": "ST Depression",
     "slope": "ST Slope",
     "ca": "Number of Major Vessels",
-    "thal": "Thalassemia"
+    "thal": "Thalassemia",
 }
+
 
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
 
+
 @app.route("/predict", methods=["POST"])
 def predict():
-    action = request.form.get("action")  # Detect which button was pressed: 'manual' or 'file'
+    action = request.form.get(
+        "action"
+    )  # Detect which button was pressed: 'manual' or 'file'
     inputs = {}
 
     # -----------------------------
     # 1️⃣ FILE UPLOAD HANDLING
     # -----------------------------
-    
+
     if action == "file":
         file = request.files.get("report_file")
         if not file or file.filename == "":
@@ -187,7 +176,9 @@ def predict():
 
             # 2b) If GPT returned a list of records, take the first
             if isinstance(features, list):
-                print(f"⚠️ GPT returned list of {len(features)} records — using the first one.")
+                print(
+                    f"⚠️ GPT returned list of {len(features)} records — using the first one."
+                )
                 features = features[0]
 
             # 3) Coerce feature values to numeric types expected by the model
@@ -268,14 +259,15 @@ def predict():
                 chart_labels=chart_labels,
                 chart_values=chart_values,
                 acc_labels=acc_labels,
-                acc_values=acc_values
+                acc_values=acc_values,
             )
 
         except Exception as e:
             # Return the error and also print stack for debugging
             import traceback
+
             traceback.print_exc()
-            return f"Error processing file: {e}", 4
+            return f"Error processing file: {e}", 400
     # -----------------------------
     # 2️⃣ MANUAL INPUT HANDLING
     # -----------------------------
@@ -343,9 +335,9 @@ def predict():
         chart_labels=chart_labels,
         chart_values=chart_values,
         acc_labels=acc_labels,
-        acc_values=acc_values
+        acc_values=acc_values,
     )
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)

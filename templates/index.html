@@ -389,16 +389,19 @@
       <div class="tab-panel" id="tab-ecg">
         <form action="/predict" method="POST" enctype="multipart/form-data">
           <div class="upload-section">
+            <!-- ✅ FIXED: name changed -->
             <input
               type="file"
-              name="ecg_file"
+              name="report_file"
               accept=".csv,.txt,.png,.jpg,.jpeg,.pdf"
             />
             <p class="hint">Upload an ECG report file for analysis.</p>
+
+            <!-- ✅ FIXED: action changed -->
             <button
               type="submit"
               name="action"
-              value="ecg"
+              value="file"
               class="predict-btn"
               style="grid-column: unset; margin-top: 0"
             >

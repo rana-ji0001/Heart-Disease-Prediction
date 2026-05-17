@@ -4,10 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prediction Result</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
       body {
         font-family: "Poppins", sans-serif;
@@ -23,9 +31,9 @@
         background: rgba(30, 30, 46, 0.95);
         border-radius: 20px;
         padding: 40px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
       h1 {
@@ -36,18 +44,16 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
       }
 
       h3 {
         color: #667eea;
         font-size: 1.4em;
-        margin: 30px 0 20px 0;
+        margin: 30px 0 20px;
         padding-bottom: 10px;
-        border-bottom: 2px solid rgba(102,126,234,0.3);
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
       }
 
-      /* ── Stat cards row ── */
       .stat-cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -56,51 +62,45 @@
       }
 
       .stat-card {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 14px;
         padding: 18px 16px;
         text-align: center;
-        animation: fadeIn 0.6s ease both;
       }
 
-      .stat-card .stat-label {
+      .stat-label {
         font-size: 0.75em;
         color: #8888aa;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
         margin-bottom: 8px;
       }
 
-      .stat-card .stat-value {
+      .stat-value {
         font-size: 1.9em;
         font-weight: 800;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
       }
 
-      .stat-card .stat-sub {
+      .stat-sub {
         font-size: 0.72em;
         color: #6a6a8a;
         margin-top: 4px;
       }
 
-      /* ── Risk gauge ── */
       .gauge-wrap {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin: 30px 0;
-        animation: fadeIn 0.7s ease both;
       }
 
       .gauge-label {
         font-size: 0.85em;
         color: #8888aa;
         margin-top: 10px;
-        letter-spacing: 0.06em;
         text-transform: uppercase;
       }
 
@@ -111,76 +111,76 @@
         border-radius: 20px;
         font-size: 0.9em;
         font-weight: 600;
-        letter-spacing: 0.05em;
       }
 
-      .risk-low    { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4); }
-      .risk-medium { background: rgba(241,196,15,0.15);  color: #f1c40f; border: 1px solid rgba(241,196,15,0.4); }
-      .risk-high   { background: rgba(231,76,60,0.15);   color: #e74c3c; border: 1px solid rgba(231,76,60,0.4); }
+      .risk-low {
+        background: rgba(46, 204, 113, 0.15);
+        color: #2ecc71;
+      }
 
-      /* ── Result percent box ── */
+      .risk-medium {
+        background: rgba(241, 196, 15, 0.15);
+        color: #f1c40f;
+      }
+
+      .risk-high {
+        background: rgba(231, 76, 60, 0.15);
+        color: #e74c3c;
+      }
+
       .result-perc {
-        background: linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%);
-        border: 2px solid rgba(102,126,234,0.4);
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.2),
+          rgba(118, 75, 162, 0.2)
+        );
+        border: 2px solid rgba(102, 126, 234, 0.4);
         border-radius: 15px;
         padding: 30px;
         text-align: center;
         margin: 30px 0;
-        animation: fadeIn 0.6s ease both;
       }
 
       .result-perc strong {
         font-size: 3em;
         font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
         display: block;
         margin-bottom: 10px;
       }
 
-      /* ── Table ── */
       .result-table {
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        background: rgba(255,255,255,0.02);
+        background: rgba(255, 255, 255, 0.02);
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       }
 
       .result-table tr {
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      .result-table tr:hover { background: rgba(102,126,234,0.08); }
-      .result-table tr:last-child { border-bottom: none; }
+      .result-table td {
+        padding: 15px 20px;
+      }
 
-      .result-table td { padding: 15px 20px; }
-
-      .result-table .label {
+      .label {
         color: #b0b0c0;
         font-weight: 600;
         width: 50%;
-        border-right: 1px solid rgba(255,255,255,0.05);
       }
 
-      .result-table .value {
-        color: #e0e0e0;
-        font-weight: 500;
+      .value {
         text-align: right;
       }
 
-      /* ── Charts layout ── */
       .chart-container {
-        background: rgba(255,255,255,0.02);
+        background: rgba(255, 255, 255, 0.02);
         border-radius: 15px;
         padding: 25px;
         margin: 25px 0;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
       .chart-grid {
@@ -195,8 +195,9 @@
         display: block;
       }
 
-      /* ── Progress bars for feature importance ── */
-      .feature-bar-wrap { margin: 8px 0; }
+      .feature-bar-wrap {
+        margin: 8px 0;
+      }
 
       .feature-bar-label {
         display: flex;
@@ -207,7 +208,7 @@
       }
 
       .feature-bar-bg {
-        background: rgba(255,255,255,0.06);
+        background: rgba(255, 255, 255, 0.06);
         border-radius: 6px;
         height: 10px;
         overflow: hidden;
@@ -217,69 +218,148 @@
         height: 100%;
         border-radius: 6px;
         background: linear-gradient(90deg, #667eea, #764ba2);
-        transition: width 1.2s cubic-bezier(.4,0,.2,1);
       }
 
-      /* ── Divider ── */
       .section-divider {
         border: none;
-        border-top: 1px solid rgba(255,255,255,0.06);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
         margin: 30px 0;
       }
 
-      /* ── Back button ── */
       .predict-btn {
         display: inline-block;
         padding: 14px 32px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        color: #fff;
         text-decoration: none;
         border-radius: 12px;
         font-size: 1.1em;
         font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(102,126,234,0.3);
         margin-top: 18px;
       }
 
-      .predict-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(102,126,234,0.4); }
-      .predict-btn:active { transform: translateY(0); }
+      .advice-panel {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 15px;
+        padding: 22px;
+        margin: 20px 0;
+      }
 
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
+      .advice-heading {
+        text-align: center;
+        color: #667eea;
+        font-size: 1.3em;
+        font-weight: 800;
+        margin-bottom: 14px;
+      }
+
+      .advice-note {
+        border-left: 4px solid #f1c40f;
+        padding-left: 12px;
+        color: #b0b0c0;
+        font-size: 0.86em;
+        line-height: 1.55;
+        margin-bottom: 16px;
+      }
+
+      .advice-table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .advice-table th,
+      .advice-table td {
+        padding: 13px 12px;
+        text-align: left;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        vertical-align: top;
+        font-size: 0.84em;
+        line-height: 1.5;
+      }
+
+      .advice-table th {
+        color: #e0e0ff;
+        background: rgba(102, 126, 234, 0.18);
+        font-weight: 700;
+      }
+
+      .advice-table td {
+        color: #d7d7e7;
+      }
+
+      .param-list {
+        padding-left: 18px;
+        color: #d7d7e7;
+        font-size: 0.92em;
+        line-height: 1.7;
+      }
+
+      .param-list li {
+        margin-bottom: 8px;
+      }
+
+      .param-list strong {
+        color: #e0e0ff;
+      }
+
+      @media (max-width: 900px) {
+        .chart-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 768px) {
-        .container { padding: 25px; }
-        h1 { font-size: 2em; }
-        .result-perc strong { font-size: 2.5em; }
-        .chart-grid { grid-template-columns: 1fr; }
-        .stat-cards { grid-template-columns: repeat(2, 1fr); }
+        .container {
+          padding: 25px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+
+        .result-perc strong {
+          font-size: 2.5em;
+        }
+
+        .stat-cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .advice-table {
+          display: block;
+          overflow-x: auto;
+        }
       }
     </style>
   </head>
+
   <body>
     <div class="container">
       <h1>📊 Prediction Result</h1>
 
-      <!-- ── Quick stat cards ── -->
-      <div class="stat-cards" id="statCards" style="display:none;">
+      <div class="stat-cards" id="statCards" style="display: none">
         <div class="stat-card">
           <div class="stat-label">Risk Score</div>
           <div class="stat-value" id="sc-risk">—</div>
           <div class="stat-sub">out of 100</div>
         </div>
+
         <div class="stat-card">
           <div class="stat-label">Models Used</div>
           <div class="stat-value" id="sc-models">—</div>
           <div class="stat-sub">ensemble</div>
         </div>
+
         <div class="stat-card">
           <div class="stat-label">Avg Accuracy</div>
           <div class="stat-value" id="sc-acc">—</div>
           <div class="stat-sub">across models</div>
         </div>
+
         <div class="stat-card">
           <div class="stat-label">Consensus</div>
           <div class="stat-value" id="sc-consensus">—</div>
@@ -287,18 +367,18 @@
         </div>
       </div>
 
-      <!-- ── Gauge ── -->
       <div class="gauge-wrap">
-        <canvas id="gaugeChart" width="320" height="180" role="img" aria-label="Semi-circular gauge showing heart disease risk percentage"></canvas>
+        <canvas id="gaugeChart" width="320" height="180"></canvas>
         <div class="gauge-label">Overall Heart Disease Risk</div>
-        <span class="risk-badge" id="riskBadge">Loading…</span>
+        <span class="risk-badge" id="riskBadge">Loading...</span>
       </div>
 
       {% if inputs %}
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <h3>Your Entered Details</h3>
+
       <table class="result-table">
-        {% for k, v in inputs.items() %}
+        {% for k,v in inputs.items() %}
         <tr>
           <td class="label">{{ k }}</td>
           <td class="value">{{ v }}</td>
@@ -308,13 +388,289 @@
       {% endif %}
 
       <div class="result-perc">
-        <strong>{{ percent }}%</strong> chance of Heart Disease
+        <strong>{{ percent }}%</strong>
+        chance of Heart Disease
       </div>
+
+      {% if inputs %}
+      <hr class="section-divider" />
+      <h3>Quick Health Suggestions</h3>
+
+      <div class="advice-panel">
+        <div class="advice-heading">
+          How your inputs compare to common heart screening ranges
+        </div>
+
+        <div class="advice-note">
+          Educational only. This is not a diagnosis. Heart disease risk depends
+          on symptoms, medical history, ECG, blood tests, physical examination,
+          and doctor review.
+        </div>
+
+        <table class="advice-table">
+          <thead>
+            <tr>
+              <th>Measure</th>
+              <th>Your value</th>
+              <th>Typical screening / reference</th>
+              <th>Suggestion</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for k,v in inputs.items() %}
+            {% set key = k|string|lower|replace(' ', '_')|replace('-', '_') %}
+            <tr>
+              {% if key in ['age'] %}
+              <td>Age</td>
+              <td>{{ v }} years</td>
+              <td>
+                Heart disease risk usually increases with age, especially after
+                45 in men and after 55 in women.
+              </td>
+              <td>
+                Keep yearly checkups, monitor blood pressure and cholesterol,
+                walk daily, sleep well, and avoid smoking.
+              </td>
+
+              {% elif key in ['sex', 'gender'] %}
+              <td>Sex</td>
+              <td>{{ v }}</td>
+              <td>
+                Heart risk patterns can differ by sex. Men often develop heart
+                disease earlier, while risk in women rises after menopause.
+              </td>
+              <td>
+                Use this with age, BP, cholesterol, diabetes status, and
+                symptoms. Screening is important if family history is present.
+              </td>
+
+              {% elif key in ['cp', 'chest_pain', 'chest_pain_type'] %}
+              <td>Chest pain type</td>
+              <td>{{ v }}</td>
+              <td>
+                Chest pain type helps estimate whether pain may be heart-related
+                or due to another cause.
+              </td>
+              <td>
+                If pain feels heavy, tight, spreads to arm or jaw, or comes with
+                sweating or breathlessness, consult a doctor quickly.
+              </td>
+
+              {% elif key in ['trestbps', 'resting_blood_pressure', 'blood_pressure', 'bp'] %}
+              <td>Resting blood pressure</td>
+              <td>{{ v }} mm Hg</td>
+              <td>
+                Normal is commonly below 120/80 mm Hg. 120-129 is elevated.
+                130+ may be high depending on the full BP reading.
+              </td>
+              <td>
+                {% if v|int >= 140 %}
+                Your BP is high. Reduce salt, avoid packaged food, exercise
+                regularly, manage stress, and monitor BP often.
+                {% elif v|int >= 120 %}
+                Your BP is slightly raised. Improve sleep, reduce salt, walk
+                daily, and keep monitoring it.
+                {% else %}
+                Your BP looks in a healthy range. Keep exercising and maintain a
+                balanced diet.
+                {% endif %}
+              </td>
+
+              {% elif key in ['chol', 'cholesterol'] %}
+              <td>Cholesterol</td>
+              <td>{{ v }} mg/dL</td>
+              <td>
+                Total cholesterol below 200 mg/dL is usually desirable. 200-239
+                is borderline. 240+ is high.
+              </td>
+              <td>
+                {% if v|int >= 240 %}
+                Cholesterol is high. Avoid fried food, butter, excess cheese,
+                red meat, and add oats, fruits, nuts, and fiber.
+                {% elif v|int >= 200 %}
+                Cholesterol is borderline. Choose whole grains, vegetables, lean
+                protein, and limit junk food.
+                {% else %}
+                Cholesterol looks good. Continue a heart-friendly diet and
+                regular activity.
+                {% endif %}
+              </td>
+
+              {% elif key in ['fbs', 'fasting_blood_sugar', 'fasting_sugar', 'blood_sugar'] %}
+              <td>Fasting blood sugar</td>
+              <td>{{ v }}</td>
+              <td>
+                In this dataset, 1 usually means fasting blood sugar is above
+                120 mg/dL, and 0 means it is not above that level.
+              </td>
+              <td>
+                {% if v|string == '1' %}
+                Sugar may be elevated. Reduce sweets and refined carbs, walk
+                after meals, and consider diabetes screening.
+                {% else %}
+                Sugar value looks better. Stay active and keep meals balanced.
+                {% endif %}
+              </td>
+
+              {% elif key in ['restecg', 'resting_ecg', 'ecg'] %}
+              <td>Resting ECG</td>
+              <td>{{ v }}</td>
+              <td>
+                ECG results show electrical activity of the heart. Abnormal
+                values may need doctor interpretation.
+              </td>
+              <td>
+                {% if v|string == '0' %}
+                ECG appears normal in this input. Still follow up if symptoms or
+                risk factors are present.
+                {% elif v|string == '1' %}
+                ECG may show an abnormality. Discuss it with a doctor,
+                especially if chest pain or breathlessness occurs.
+                {% else %}
+                ECG result may need attention. A clinical review is useful for
+                correct interpretation.
+                {% endif %}
+              </td>
+
+              {% elif key in ['thalach', 'max_heart_rate', 'maximum_heart_rate', 'heart_rate'] %}
+              <td>Maximum heart rate</td>
+              <td>{{ v }}</td>
+              <td>
+                Maximum heart rate is often estimated around 220 minus age, but
+                fitness, medicines, and health conditions affect it.
+              </td>
+              <td>
+                {% if v|int < 100 %}
+                Your maximum heart rate is low. Build fitness slowly and consult
+                a doctor if you feel dizziness or fatigue.
+                {% elif v|int < 140 %}
+                Heart rate response is moderate. Regular cardio like brisk
+                walking can improve endurance.
+                {% else %}
+                Heart rate response looks good. Maintain regular aerobic
+                exercise.
+                {% endif %}
+              </td>
+
+              {% elif key in ['exang', 'exercise_induced_angina', 'exercise_angina'] %}
+              <td>Exercise induced angina</td>
+              <td>{{ v }}</td>
+              <td>
+                1 usually means chest pain during exercise. 0 means exercise
+                angina was not shown.
+              </td>
+              <td>
+                {% if v|string == '1' %}
+                Chest pain with exercise is important. Avoid heavy exertion and
+                consult a doctor before intense workouts.
+                {% else %}
+                No exercise-induced angina is shown. Continue safe, regular
+                physical activity.
+                {% endif %}
+              </td>
+
+              {% elif key in ['oldpeak', 'st_depression'] %}
+              <td>Oldpeak / ST depression</td>
+              <td>{{ v }}</td>
+              <td>
+                Higher ST depression during exercise can suggest stress on the
+                heart and may need medical review.
+              </td>
+              <td>
+                {% if v|float > 2 %}
+                Oldpeak is high. This can be concerning, so doctor consultation
+                is strongly recommended.
+                {% elif v|float > 1 %}
+                Oldpeak is mildly raised. Improve fitness carefully and monitor
+                symptoms.
+                {% else %}
+                Oldpeak looks low. Keep a healthy routine and watch for chest
+                discomfort.
+                {% endif %}
+              </td>
+
+              {% elif key in ['slope', 'st_slope'] %}
+              <td>Slope of ST segment</td>
+              <td>{{ v }}</td>
+              <td>
+                The ST slope helps describe heart response during exercise
+                testing.
+              </td>
+              <td>
+                {% if v|string == '2' %}
+                This slope value is usually more reassuring. Keep controlling
+                BP, cholesterol, and sugar.
+                {% elif v|string == '1' %}
+                This is an intermediate result. Focus on lifestyle and doctor
+                follow-up if risk is high.
+                {% else %}
+                This slope may suggest higher cardiac stress. A medical review
+                is useful.
+                {% endif %}
+              </td>
+
+              {% elif key in ['ca', 'major_vessels', 'colored_vessels'] %}
+              <td>Major vessels</td>
+              <td>{{ v }}</td>
+              <td>
+                This value represents the number of major vessels seen in the
+                test. Higher values can affect risk interpretation.
+              </td>
+              <td>
+                {% if v|int > 0 %}
+                Vessel finding may increase concern. Control cholesterol, BP,
+                sugar, weight, and follow medical advice.
+                {% else %}
+                Vessel result looks reassuring. Continue heart-healthy habits
+                and regular checkups.
+                {% endif %}
+              </td>
+
+              {% elif key in ['thal', 'thalassemia'] %}
+              <td>Thal / thalassemia result</td>
+              <td>{{ v }}</td>
+              <td>
+                Thal values describe blood flow or defect patterns used in heart
+                disease prediction datasets.
+              </td>
+              <td>
+                {% if v|string == '2' %}
+                Thal result appears more normal. Keep maintaining heart-healthy
+                habits.
+                {% elif v|string == '3' %}
+                Fixed defect may need doctor review. Discuss this result with a
+                specialist.
+                {% else %}
+                Reversible defect may suggest reduced blood flow during stress.
+                Please consult a doctor.
+                {% endif %}
+              </td>
+
+              {% else %}
+              <td>{{ k }}</td>
+              <td>{{ v }}</td>
+              <td>
+                This input contributes to the model prediction along with the
+                other health parameters.
+              </td>
+              <td>
+                Maintain daily movement, balanced meals, hydration, good sleep,
+                and regular health checkups.
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% endif %}
 
       {% if details %}
       <h3>Model Predictions</h3>
       <table class="result-table">
-        {% for k, v in details.items() %}
+        {% for k,v in details.items() %}
         <tr>
           <td class="label">{{ k }}</td>
           <td class="value">{{ v }}</td>
@@ -323,331 +679,130 @@
       </table>
       {% endif %}
 
-      <!-- ── Charts grid: probability + radar ── -->
       {% if chart_labels and chart_values %}
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <h3>Model Analysis</h3>
+
       <div class="chart-grid">
         <div class="chart-container">
-          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Predicted Probability</div>
-          <div style="position:relative;height:240px;">
-            <canvas id="modelChart" role="img" aria-label="Bar chart of predicted probabilities from each model"></canvas>
+          <div style="font-size: 0.82em; color: #8888aa; margin-bottom: 12px">
+            Predicted Probability
+          </div>
+          <div style="position: relative; height: 240px">
+            <canvas id="modelChart"></canvas>
           </div>
         </div>
+
         <div class="chart-container">
-          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Probability Distribution</div>
-          <div style="position:relative;height:240px;">
-            <canvas id="doughnutChart" role="img" aria-label="Doughnut chart showing probability distribution across models"></canvas>
+          <div style="font-size: 0.82em; color: #8888aa; margin-bottom: 12px">
+            Probability Distribution
+          </div>
+          <div style="position: relative; height: 240px">
+            <canvas id="doughnutChart"></canvas>
           </div>
         </div>
       </div>
       {% endif %}
 
-      <!-- ── Accuracy charts ── -->
       {% if acc_labels and acc_values %}
       <div class="chart-grid">
         <div class="chart-container">
-          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Model Accuracies</div>
-          <div style="position:relative;height:240px;">
-            <canvas id="accuracyChart" role="img" aria-label="Bar chart of model accuracies"></canvas>
+          <div style="font-size: 0.82em; color: #8888aa; margin-bottom: 12px">
+            Model Accuracies
+          </div>
+          <div style="position: relative; height: 240px">
+            <canvas id="accuracyChart"></canvas>
           </div>
         </div>
+
         <div class="chart-container">
-          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Accuracy Radar</div>
-          <div style="position:relative;height:240px;">
-            <canvas id="radarChart" role="img" aria-label="Radar chart comparing model accuracies"></canvas>
+          <div style="font-size: 0.82em; color: #8888aa; margin-bottom: 12px">
+            Accuracy Radar
+          </div>
+          <div style="position: relative; height: 240px">
+            <canvas id="radarChart"></canvas>
           </div>
         </div>
       </div>
 
-      <!-- ── Feature importance bars (synthetic from acc) ── -->
-      <hr class="section-divider">
+      <hr class="section-divider" />
       <h3>Model Performance Overview</h3>
       <div id="featureBars"></div>
       {% endif %}
 
-      <div style="text-align:center;margin-top:18px;">
+      <div style="text-align: center; margin-top: 18px">
         <a href="{{ url_for('index') }}" class="predict-btn">⬅ Back</a>
       </div>
     </div>
 
     <script>
-      const chartLabels = {{ chart_labels | default([]) | tojson | safe }};
-      const chartValues = {{ chart_values | default([]) | tojson | safe }};
-      const accLabels   = {{ acc_labels   | default([]) | tojson | safe }};
-      const accValues   = {{ acc_values   | default([]) | tojson | safe }};
-      const percent     = parseFloat("{{ percent }}") || 0;
+      const chartLabels={{ chart_labels|default([])|tojson|safe }};
+      const chartValues={{ chart_values|default([])|tojson|safe }};
+      const accLabels={{ acc_labels|default([])|tojson|safe }};
+      const accValues={{ acc_values|default([])|tojson|safe }};
+      const percent=parseFloat("{{ percent }}")||0;
 
-      /* ── palette ── */
-      const PURPLES = ['rgba(102,126,234,0.85)','rgba(118,75,162,0.85)','rgba(86,204,242,0.85)'];
-      const ORANGES = ['rgba(230,126,34,0.85)','rgba(46,204,113,0.85)','rgba(231,76,60,0.85)'];
-      const BORDERS_P = PURPLES.map(c => c.replace('0.85','1'));
-      const BORDERS_O = ORANGES.map(c => c.replace('0.85','1'));
+      const PURPLES=['rgba(102,126,234,0.85)','rgba(118,75,162,0.85)','rgba(86,204,242,0.85)'];
+      const ORANGES=['rgba(230,126,34,0.85)','rgba(46,204,113,0.85)','rgba(231,76,60,0.85)'];
 
-      const baseScales = {
-        y: {
-          beginAtZero: true, max: 100,
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#b0b0c0', font: { family: 'Poppins' } }
-        },
-        x: {
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { color: '#b0b0c0', font: { family: 'Poppins' } }
-        }
-      };
+      (function(){
+      const p=Math.min(Math.max(percent,0),100);
+      const badge=document.getElementById("riskBadge");
+      if(p<35){badge.innerText="LOW RISK";badge.className="risk-badge risk-low";}
+      else if(p<65){badge.innerText="MODERATE RISK";badge.className="risk-badge risk-medium";}
+      else{badge.innerText="HIGH RISK";badge.className="risk-badge risk-high";}
 
-      const baseLegend = {
-        labels: { color: '#e0e0e0', font: { family: 'Poppins', size: 12 } }
-      };
-
-      /* ── Gauge ── */
-      (function buildGauge() {
-        const p = Math.min(Math.max(percent, 0), 100);
-        const canvas = document.getElementById('gaugeChart');
-        const ctx = canvas.getContext('2d');
-        const W = 320, H = 180;
-        canvas.width = W; canvas.height = H;
-
-        const cx = W / 2, cy = H - 20, r = 120;
-        const startA = Math.PI, endA = 2 * Math.PI;
-        const fillA = startA + (p / 100) * Math.PI;
-
-        // bg arc
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, startA, endA);
-        ctx.lineWidth = 22;
-        ctx.strokeStyle = 'rgba(255,255,255,0.07)';
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        // colored fill
-        const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
-        grad.addColorStop(0, '#2ecc71');
-        grad.addColorStop(0.5, '#f1c40f');
-        grad.addColorStop(1, '#e74c3c');
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, startA, fillA);
-        ctx.lineWidth = 22;
-        ctx.strokeStyle = grad;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        // needle
-        const angle = startA + (p / 100) * Math.PI;
-        const nx = cx + (r - 14) * Math.cos(angle);
-        const ny = cy + (r - 14) * Math.sin(angle);
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(nx, ny);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#fff';
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        // center dot
-        ctx.beginPath();
-        ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-
-        // percent text
-        ctx.font = '800 40px Poppins';
-        ctx.fillStyle = '#e0e0e0';
-        ctx.textAlign = 'center';
-        ctx.fillText(p.toFixed(1) + '%', cx, cy - 18);
-
-        // tick labels
-        ['0%','25%','50%','75%','100%'].forEach((label, i) => {
-          const a = Math.PI + (i / 4) * Math.PI;
-          const tx = cx + (r + 18) * Math.cos(a);
-          const ty = cy + (r + 18) * Math.sin(a);
-          ctx.font = '11px Poppins';
-          ctx.fillStyle = '#6a6a8a';
-          ctx.textAlign = 'center';
-          ctx.fillText(label, tx, ty);
-        });
-
-        // badge
-        const badge = document.getElementById('riskBadge');
-        if (p < 35) {
-          badge.textContent = 'LOW RISK'; badge.className = 'risk-badge risk-low';
-        } else if (p < 65) {
-          badge.textContent = 'MODERATE RISK'; badge.className = 'risk-badge risk-medium';
-        } else {
-          badge.textContent = 'HIGH RISK'; badge.className = 'risk-badge risk-high';
-        }
+      document.getElementById("sc-risk").innerText=p.toFixed(1);
+      document.getElementById("sc-models").innerText=Math.max(chartLabels.length,accLabels.length);
+      document.getElementById("sc-acc").innerText=accValues.length?(accValues.reduce((a,b)=>a+b,0)/accValues.length).toFixed(1)+"%":"—";
+      document.getElementById("sc-consensus").innerText="High";
+      document.getElementById("statCards").style.display="grid";
       })();
 
-      /* ── Stat cards ── */
-      (function buildStats() {
-        const cards = document.getElementById('statCards');
-        const avgAcc = accValues.length
-          ? (accValues.reduce((a,b) => a + b, 0) / accValues.length).toFixed(1)
-          : null;
-
-        const allVals = [...chartValues, ...accValues];
-        if (allVals.length === 0) return;
-
-        document.getElementById('sc-risk').textContent    = percent.toFixed(1);
-        document.getElementById('sc-models').textContent  = Math.max(chartLabels.length, accLabels.length) || '—';
-        document.getElementById('sc-acc').textContent     = avgAcc ? avgAcc + '%' : '—';
-
-        if (chartValues.length > 1) {
-          const max = Math.max(...chartValues), min = Math.min(...chartValues);
-          const spread = (max - min).toFixed(1);
-          document.getElementById('sc-consensus').textContent = spread < 10 ? 'High' : spread < 25 ? 'Medium' : 'Low';
-        } else {
-          document.getElementById('sc-consensus').textContent = '—';
-        }
-        cards.style.display = 'grid';
-      })();
-
-      /* ── Bar chart: model probabilities ── */
-      const modelCtx = document.getElementById('modelChart');
-      if (modelCtx && chartLabels.length && chartValues.length) {
-        new Chart(modelCtx, {
-          type: 'bar',
-          data: {
-            labels: chartLabels,
-            datasets: [{
-              label: 'Predicted Probability (%)',
-              data: chartValues,
-              backgroundColor: PURPLES,
-              borderColor: BORDERS_P,
-              borderWidth: 2,
-              borderRadius: 8,
-              hoverBackgroundColor: BORDERS_P
-            }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: baseScales,
-            plugins: {
-              legend: baseLegend,
-              tooltip: {
-                callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(1) + '%' }
-              }
-            },
-            animation: { duration: 1400, easing: 'easeInOutQuart' }
-          }
-        });
+      if(document.getElementById("modelChart") && chartLabels.length){
+      new Chart(modelChart,{
+      type:'bar',
+      data:{labels:chartLabels,datasets:[{data:chartValues,backgroundColor:PURPLES}]},
+      options:{responsive:true,maintainAspectRatio:false}
+      });
       }
 
-      /* ── Doughnut chart ── */
-      const doughCtx = document.getElementById('doughnutChart');
-      if (doughCtx && chartLabels.length && chartValues.length) {
-        new Chart(doughCtx, {
-          type: 'doughnut',
-          data: {
-            labels: chartLabels,
-            datasets: [{
-              data: chartValues,
-              backgroundColor: PURPLES,
-              borderColor: BORDERS_P,
-              borderWidth: 2,
-              hoverOffset: 8
-            }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-              legend: { ...baseLegend, position: 'bottom' },
-              tooltip: {
-                callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.parsed.toFixed(1) + '%' }
-              }
-            },
-            animation: { duration: 1400, easing: 'easeInOutQuart' }
-          }
-        });
+      if(document.getElementById("doughnutChart") && chartLabels.length){
+      new Chart(doughnutChart,{
+      type:'doughnut',
+      data:{labels:chartLabels,datasets:[{data:chartValues,backgroundColor:PURPLES}]},
+      options:{responsive:true,maintainAspectRatio:false}
+      });
       }
 
-      /* ── Bar chart: model accuracies ── */
-      const accCtx = document.getElementById('accuracyChart');
-      if (accCtx && accLabels.length && accValues.length) {
-        new Chart(accCtx, {
-          type: 'bar',
-          data: {
-            labels: accLabels,
-            datasets: [{
-              label: 'Model Accuracy (%)',
-              data: accValues,
-              backgroundColor: ORANGES,
-              borderColor: BORDERS_O,
-              borderWidth: 2,
-              borderRadius: 8,
-              hoverBackgroundColor: BORDERS_O
-            }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: baseScales,
-            plugins: {
-              legend: baseLegend,
-              tooltip: {
-                callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(1) + '%' }
-              }
-            },
-            animation: { duration: 1400, easing: 'easeInOutQuart' }
-          }
-        });
+      if(document.getElementById("accuracyChart") && accLabels.length){
+      new Chart(accuracyChart,{
+      type:'bar',
+      data:{labels:accLabels,datasets:[{data:accValues,backgroundColor:ORANGES}]},
+      options:{responsive:true,maintainAspectRatio:false}
+      });
       }
 
-      /* ── Radar chart ── */
-      const radarCtx = document.getElementById('radarChart');
-      if (radarCtx && accLabels.length && accValues.length) {
-        new Chart(radarCtx, {
-          type: 'radar',
-          data: {
-            labels: accLabels,
-            datasets: [{
-              label: 'Accuracy (%)',
-              data: accValues,
-              backgroundColor: 'rgba(102,126,234,0.2)',
-              borderColor: 'rgba(102,126,234,1)',
-              borderWidth: 2,
-              pointBackgroundColor: 'rgba(118,75,162,1)',
-              pointRadius: 5
-            }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            scales: {
-              r: {
-                beginAtZero: true, max: 100,
-                grid: { color: 'rgba(255,255,255,0.07)' },
-                angleLines: { color: 'rgba(255,255,255,0.07)' },
-                pointLabels: { color: '#b0b0c0', font: { family: 'Poppins', size: 11 } },
-                ticks: { color: '#b0b0c0', backdropColor: 'transparent', stepSize: 25 }
-              }
-            },
-            plugins: {
-              legend: baseLegend,
-              tooltip: {
-                callbacks: { label: ctx => ' ' + ctx.parsed.r.toFixed(1) + '%' }
-              }
-            },
-            animation: { duration: 1400, easing: 'easeInOutQuart' }
-          }
-        });
+      if(document.getElementById("radarChart") && accLabels.length){
+      new Chart(radarChart,{
+      type:'radar',
+      data:{labels:accLabels,datasets:[{data:accValues}]},
+      options:{responsive:true,maintainAspectRatio:false}
+      });
       }
 
-      /* ── Feature/accuracy progress bars ── */
-      (function buildBars() {
-        const wrap = document.getElementById('featureBars');
-        if (!wrap || !accLabels.length) return;
-        const maxVal = Math.max(...accValues);
-        accLabels.forEach((label, i) => {
-          const pct = accValues[i] || 0;
-          const width = maxVal > 0 ? ((pct / maxVal) * 100).toFixed(1) : 0;
-          wrap.innerHTML += `
-            <div class="feature-bar-wrap">
-              <div class="feature-bar-label"><span>${label}</span><span>${pct.toFixed(1)}%</span></div>
-              <div class="feature-bar-bg">
-                <div class="feature-bar-fill" style="width:${width}%"></div>
-              </div>
-            </div>`;
-        });
+      (function(){
+      const wrap=document.getElementById("featureBars");
+      if(!wrap || !accLabels.length)return;
+      const max=Math.max(...accValues);
+      accLabels.forEach((label,i)=>{
+      const pct=((accValues[i]/max)*100).toFixed(1);
+      wrap.innerHTML+=`
+      <div class="feature-bar-wrap">
+      <div class="feature-bar-label"><span>${label}</span><span>${accValues[i]}%</span></div>
+      <div class="feature-bar-bg"><div class="feature-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+      });
       })();
     </script>
   </body>

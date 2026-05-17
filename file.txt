@@ -4,17 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prediction Result</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
 
       body {
         font-family: "Poppins", sans-serif;
@@ -25,14 +18,14 @@
       }
 
       .container {
-        max-width: 1000px;
+        max-width: 1100px;
         margin: 0 auto;
         background: rgba(30, 30, 46, 0.95);
         border-radius: 20px;
         padding: 40px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.05);
       }
 
       h1 {
@@ -51,32 +44,89 @@
         font-size: 1.4em;
         margin: 30px 0 20px 0;
         padding-bottom: 10px;
-        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        border-bottom: 2px solid rgba(102,126,234,0.3);
       }
 
+      /* ── Stat cards row ── */
+      .stat-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+        margin: 30px 0;
+      }
+
+      .stat-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 18px 16px;
+        text-align: center;
+        animation: fadeIn 0.6s ease both;
+      }
+
+      .stat-card .stat-label {
+        font-size: 0.75em;
+        color: #8888aa;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+      }
+
+      .stat-card .stat-value {
+        font-size: 1.9em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-card .stat-sub {
+        font-size: 0.72em;
+        color: #6a6a8a;
+        margin-top: 4px;
+      }
+
+      /* ── Risk gauge ── */
+      .gauge-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 30px 0;
+        animation: fadeIn 0.7s ease both;
+      }
+
+      .gauge-label {
+        font-size: 0.85em;
+        color: #8888aa;
+        margin-top: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .risk-badge {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 20px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+      }
+
+      .risk-low    { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4); }
+      .risk-medium { background: rgba(241,196,15,0.15);  color: #f1c40f; border: 1px solid rgba(241,196,15,0.4); }
+      .risk-high   { background: rgba(231,76,60,0.15);   color: #e74c3c; border: 1px solid rgba(231,76,60,0.4); }
+
+      /* ── Result percent box ── */
       .result-perc {
-        background: linear-gradient(
-          135deg,
-          rgba(102, 126, 234, 0.2) 0%,
-          rgba(118, 75, 162, 0.2) 100%
-        );
-        border: 2px solid rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%);
+        border: 2px solid rgba(102,126,234,0.4);
         border-radius: 15px;
         padding: 30px;
         text-align: center;
         margin: 30px 0;
-        animation: fadeIn 0.6s ease-in;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        animation: fadeIn 0.6s ease both;
       }
 
       .result-perc strong {
@@ -90,38 +140,32 @@
         margin-bottom: 10px;
       }
 
+      /* ── Table ── */
       .result-table {
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255,255,255,0.02);
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       }
 
       .result-table tr {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
         transition: all 0.3s ease;
       }
 
-      .result-table tr:hover {
-        background: rgba(102, 126, 234, 0.08);
-      }
+      .result-table tr:hover { background: rgba(102,126,234,0.08); }
+      .result-table tr:last-child { border-bottom: none; }
 
-      .result-table tr:last-child {
-        border-bottom: none;
-      }
-
-      .result-table td {
-        padding: 15px 20px;
-      }
+      .result-table td { padding: 15px 20px; }
 
       .result-table .label {
         color: #b0b0c0;
         font-weight: 600;
         width: 50%;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
       }
 
       .result-table .value {
@@ -130,16 +174,60 @@
         text-align: right;
       }
 
-      canvas {
-        max-width: 600px;
-        margin: 20px auto;
-        display: block;
-        background: rgba(255, 255, 255, 0.02);
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      /* ── Charts layout ── */
+      .chart-container {
+        background: rgba(255,255,255,0.02);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 25px 0;
+        border: 1px solid rgba(255,255,255,0.05);
       }
 
+      .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 25px 0;
+      }
+
+      canvas {
+        max-width: 100%;
+        display: block;
+      }
+
+      /* ── Progress bars for feature importance ── */
+      .feature-bar-wrap { margin: 8px 0; }
+
+      .feature-bar-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8em;
+        color: #b0b0c0;
+        margin-bottom: 4px;
+      }
+
+      .feature-bar-bg {
+        background: rgba(255,255,255,0.06);
+        border-radius: 6px;
+        height: 10px;
+        overflow: hidden;
+      }
+
+      .feature-bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 1.2s cubic-bezier(.4,0,.2,1);
+      }
+
+      /* ── Divider ── */
+      .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin: 30px 0;
+      }
+
+      /* ── Back button ── */
       .predict-btn {
         display: inline-block;
         padding: 14px 32px;
@@ -150,43 +238,24 @@
         font-size: 1.1em;
         font-weight: 600;
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 20px rgba(102,126,234,0.3);
         margin-top: 18px;
       }
 
-      .predict-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-      }
+      .predict-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(102,126,234,0.4); }
+      .predict-btn:active { transform: translateY(0); }
 
-      .predict-btn:active {
-        transform: translateY(0);
-      }
-
-      .chart-container {
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 15px;
-        padding: 25px;
-        margin: 25px 0;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
       }
 
       @media (max-width: 768px) {
-        .container {
-          padding: 25px;
-        }
-
-        h1 {
-          font-size: 2em;
-        }
-
-        .result-perc strong {
-          font-size: 2.5em;
-        }
-
-        canvas {
-          max-width: 100%;
-        }
+        .container { padding: 25px; }
+        h1 { font-size: 2em; }
+        .result-perc strong { font-size: 2.5em; }
+        .chart-grid { grid-template-columns: 1fr; }
+        .stat-cards { grid-template-columns: repeat(2, 1fr); }
       }
     </style>
   </head>
@@ -194,7 +263,39 @@
     <div class="container">
       <h1>📊 Prediction Result</h1>
 
+      <!-- ── Quick stat cards ── -->
+      <div class="stat-cards" id="statCards" style="display:none;">
+        <div class="stat-card">
+          <div class="stat-label">Risk Score</div>
+          <div class="stat-value" id="sc-risk">—</div>
+          <div class="stat-sub">out of 100</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Models Used</div>
+          <div class="stat-value" id="sc-models">—</div>
+          <div class="stat-sub">ensemble</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Accuracy</div>
+          <div class="stat-value" id="sc-acc">—</div>
+          <div class="stat-sub">across models</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Consensus</div>
+          <div class="stat-value" id="sc-consensus">—</div>
+          <div class="stat-sub">model agreement</div>
+        </div>
+      </div>
+
+      <!-- ── Gauge ── -->
+      <div class="gauge-wrap">
+        <canvas id="gaugeChart" width="320" height="180" role="img" aria-label="Semi-circular gauge showing heart disease risk percentage"></canvas>
+        <div class="gauge-label">Overall Heart Disease Risk</div>
+        <span class="risk-badge" id="riskBadge">Loading…</span>
+      </div>
+
       {% if inputs %}
+      <hr class="section-divider">
       <h3>Your Entered Details</h3>
       <table class="result-table">
         {% for k, v in inputs.items() %}
@@ -220,133 +321,334 @@
         </tr>
         {% endfor %}
       </table>
-      {% endif %} {% if chart_labels and chart_values %}
-      <div class="chart-container">
-        <canvas id="modelChart"></canvas>
-      </div>
-      {% endif %} {% if acc_labels and acc_values %}
-      <h3>Model Accuracies</h3>
-      <div class="chart-container">
-        <canvas id="accuracyChart"></canvas>
+      {% endif %}
+
+      <!-- ── Charts grid: probability + radar ── -->
+      {% if chart_labels and chart_values %}
+      <hr class="section-divider">
+      <h3>Model Analysis</h3>
+      <div class="chart-grid">
+        <div class="chart-container">
+          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Predicted Probability</div>
+          <div style="position:relative;height:240px;">
+            <canvas id="modelChart" role="img" aria-label="Bar chart of predicted probabilities from each model"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Probability Distribution</div>
+          <div style="position:relative;height:240px;">
+            <canvas id="doughnutChart" role="img" aria-label="Doughnut chart showing probability distribution across models"></canvas>
+          </div>
+        </div>
       </div>
       {% endif %}
 
-      <div style="text-align: center; margin-top: 18px">
+      <!-- ── Accuracy charts ── -->
+      {% if acc_labels and acc_values %}
+      <div class="chart-grid">
+        <div class="chart-container">
+          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Model Accuracies</div>
+          <div style="position:relative;height:240px;">
+            <canvas id="accuracyChart" role="img" aria-label="Bar chart of model accuracies"></canvas>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div style="font-size:0.82em;color:#8888aa;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;">Accuracy Radar</div>
+          <div style="position:relative;height:240px;">
+            <canvas id="radarChart" role="img" aria-label="Radar chart comparing model accuracies"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Feature importance bars (synthetic from acc) ── -->
+      <hr class="section-divider">
+      <h3>Model Performance Overview</h3>
+      <div id="featureBars"></div>
+      {% endif %}
+
+      <div style="text-align:center;margin-top:18px;">
         <a href="{{ url_for('index') }}" class="predict-btn">⬅ Back</a>
       </div>
     </div>
 
     <script>
-      // Safely pass Python data to JS using |tojson|safe
       const chartLabels = {{ chart_labels | default([]) | tojson | safe }};
       const chartValues = {{ chart_values | default([]) | tojson | safe }};
-      const accLabels = {{ acc_labels | default([]) | tojson | safe }};
-      const accValues = {{ acc_values | default([]) | tojson | safe }};
+      const accLabels   = {{ acc_labels   | default([]) | tojson | safe }};
+      const accValues   = {{ acc_values   | default([]) | tojson | safe }};
+      const percent     = parseFloat("{{ percent }}") || 0;
 
-      const modelCtx = document.getElementById('modelChart');
-      const accuracyCtx = document.getElementById('accuracyChart');
+      /* ── palette ── */
+      const PURPLES = ['rgba(102,126,234,0.85)','rgba(118,75,162,0.85)','rgba(86,204,242,0.85)'];
+      const ORANGES = ['rgba(230,126,34,0.85)','rgba(46,204,113,0.85)','rgba(231,76,60,0.85)'];
+      const BORDERS_P = PURPLES.map(c => c.replace('0.85','1'));
+      const BORDERS_O = ORANGES.map(c => c.replace('0.85','1'));
 
-      // Enhanced chart configuration
-      const chartConfig = {
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100,
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
-            },
-            ticks: {
-              color: '#b0b0c0'
-            }
-          },
-          x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)'
-            },
-            ticks: {
-              color: '#b0b0c0'
-            }
-          }
+      const baseScales = {
+        y: {
+          beginAtZero: true, max: 100,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#b0b0c0', font: { family: 'Poppins' } }
         },
-        plugins: {
-          legend: {
-            labels: {
-              color: '#e0e0e0',
-              font: {
-                family: 'Poppins',
-                size: 12
-              }
-            }
-          }
-        },
-        animation: {
-          duration: 1500,
-          easing: 'easeInOutQuart'
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#b0b0c0', font: { family: 'Poppins' } }
         }
       };
 
-      // Only create charts if data exists
-      if (modelCtx && chartLabels.length > 0 && chartValues.length > 0) {
-        new Chart(modelCtx.getContext('2d'), {
+      const baseLegend = {
+        labels: { color: '#e0e0e0', font: { family: 'Poppins', size: 12 } }
+      };
+
+      /* ── Gauge ── */
+      (function buildGauge() {
+        const p = Math.min(Math.max(percent, 0), 100);
+        const canvas = document.getElementById('gaugeChart');
+        const ctx = canvas.getContext('2d');
+        const W = 320, H = 180;
+        canvas.width = W; canvas.height = H;
+
+        const cx = W / 2, cy = H - 20, r = 120;
+        const startA = Math.PI, endA = 2 * Math.PI;
+        const fillA = startA + (p / 100) * Math.PI;
+
+        // bg arc
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, startA, endA);
+        ctx.lineWidth = 22;
+        ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // colored fill
+        const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
+        grad.addColorStop(0, '#2ecc71');
+        grad.addColorStop(0.5, '#f1c40f');
+        grad.addColorStop(1, '#e74c3c');
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, startA, fillA);
+        ctx.lineWidth = 22;
+        ctx.strokeStyle = grad;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // needle
+        const angle = startA + (p / 100) * Math.PI;
+        const nx = cx + (r - 14) * Math.cos(angle);
+        const ny = cy + (r - 14) * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(nx, ny);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#fff';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // center dot
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+
+        // percent text
+        ctx.font = '800 40px Poppins';
+        ctx.fillStyle = '#e0e0e0';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.toFixed(1) + '%', cx, cy - 18);
+
+        // tick labels
+        ['0%','25%','50%','75%','100%'].forEach((label, i) => {
+          const a = Math.PI + (i / 4) * Math.PI;
+          const tx = cx + (r + 18) * Math.cos(a);
+          const ty = cy + (r + 18) * Math.sin(a);
+          ctx.font = '11px Poppins';
+          ctx.fillStyle = '#6a6a8a';
+          ctx.textAlign = 'center';
+          ctx.fillText(label, tx, ty);
+        });
+
+        // badge
+        const badge = document.getElementById('riskBadge');
+        if (p < 35) {
+          badge.textContent = 'LOW RISK'; badge.className = 'risk-badge risk-low';
+        } else if (p < 65) {
+          badge.textContent = 'MODERATE RISK'; badge.className = 'risk-badge risk-medium';
+        } else {
+          badge.textContent = 'HIGH RISK'; badge.className = 'risk-badge risk-high';
+        }
+      })();
+
+      /* ── Stat cards ── */
+      (function buildStats() {
+        const cards = document.getElementById('statCards');
+        const avgAcc = accValues.length
+          ? (accValues.reduce((a,b) => a + b, 0) / accValues.length).toFixed(1)
+          : null;
+
+        const allVals = [...chartValues, ...accValues];
+        if (allVals.length === 0) return;
+
+        document.getElementById('sc-risk').textContent    = percent.toFixed(1);
+        document.getElementById('sc-models').textContent  = Math.max(chartLabels.length, accLabels.length) || '—';
+        document.getElementById('sc-acc').textContent     = avgAcc ? avgAcc + '%' : '—';
+
+        if (chartValues.length > 1) {
+          const max = Math.max(...chartValues), min = Math.min(...chartValues);
+          const spread = (max - min).toFixed(1);
+          document.getElementById('sc-consensus').textContent = spread < 10 ? 'High' : spread < 25 ? 'Medium' : 'Low';
+        } else {
+          document.getElementById('sc-consensus').textContent = '—';
+        }
+        cards.style.display = 'grid';
+      })();
+
+      /* ── Bar chart: model probabilities ── */
+      const modelCtx = document.getElementById('modelChart');
+      if (modelCtx && chartLabels.length && chartValues.length) {
+        new Chart(modelCtx, {
           type: 'bar',
           data: {
             labels: chartLabels,
             datasets: [{
               label: 'Predicted Probability (%)',
               data: chartValues,
-              backgroundColor: [
-                'rgba(102, 126, 234, 0.8)',
-                'rgba(118, 75, 162, 0.8)',
-                'rgba(86, 204, 242, 0.8)'
-              ],
-              borderColor: [
-                'rgba(102, 126, 234, 1)',
-                'rgba(118, 75, 162, 1)',
-                'rgba(86, 204, 242, 1)'
-              ],
+              backgroundColor: PURPLES,
+              borderColor: BORDERS_P,
               borderWidth: 2,
               borderRadius: 8,
-              hoverBackgroundColor: [
-                'rgba(102, 126, 234, 1)',
-                'rgba(118, 75, 162, 1)',
-                'rgba(86, 204, 242, 1)'
-              ]
+              hoverBackgroundColor: BORDERS_P
             }]
           },
-          options: chartConfig
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: baseScales,
+            plugins: {
+              legend: baseLegend,
+              tooltip: {
+                callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(1) + '%' }
+              }
+            },
+            animation: { duration: 1400, easing: 'easeInOutQuart' }
+          }
         });
       }
 
-      if (accuracyCtx && accLabels.length > 0 && accValues.length > 0) {
-        new Chart(accuracyCtx.getContext('2d'), {
+      /* ── Doughnut chart ── */
+      const doughCtx = document.getElementById('doughnutChart');
+      if (doughCtx && chartLabels.length && chartValues.length) {
+        new Chart(doughCtx, {
+          type: 'doughnut',
+          data: {
+            labels: chartLabels,
+            datasets: [{
+              data: chartValues,
+              backgroundColor: PURPLES,
+              borderColor: BORDERS_P,
+              borderWidth: 2,
+              hoverOffset: 8
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: { ...baseLegend, position: 'bottom' },
+              tooltip: {
+                callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.parsed.toFixed(1) + '%' }
+              }
+            },
+            animation: { duration: 1400, easing: 'easeInOutQuart' }
+          }
+        });
+      }
+
+      /* ── Bar chart: model accuracies ── */
+      const accCtx = document.getElementById('accuracyChart');
+      if (accCtx && accLabels.length && accValues.length) {
+        new Chart(accCtx, {
           type: 'bar',
           data: {
             labels: accLabels,
             datasets: [{
               label: 'Model Accuracy (%)',
               data: accValues,
-              backgroundColor: [
-                'rgba(230, 126, 34, 0.8)',
-                'rgba(46, 204, 113, 0.8)',
-                'rgba(231, 76, 60, 0.8)'
-              ],
-              borderColor: [
-                'rgba(230, 126, 34, 1)',
-                'rgba(46, 204, 113, 1)',
-                'rgba(231, 76, 60, 1)'
-              ],
+              backgroundColor: ORANGES,
+              borderColor: BORDERS_O,
               borderWidth: 2,
               borderRadius: 8,
-              hoverBackgroundColor: [
-                'rgba(230, 126, 34, 1)',
-                'rgba(46, 204, 113, 1)',
-                'rgba(231, 76, 60, 1)'
-              ]
+              hoverBackgroundColor: BORDERS_O
             }]
           },
-          options: chartConfig
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: baseScales,
+            plugins: {
+              legend: baseLegend,
+              tooltip: {
+                callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(1) + '%' }
+              }
+            },
+            animation: { duration: 1400, easing: 'easeInOutQuart' }
+          }
         });
       }
+
+      /* ── Radar chart ── */
+      const radarCtx = document.getElementById('radarChart');
+      if (radarCtx && accLabels.length && accValues.length) {
+        new Chart(radarCtx, {
+          type: 'radar',
+          data: {
+            labels: accLabels,
+            datasets: [{
+              label: 'Accuracy (%)',
+              data: accValues,
+              backgroundColor: 'rgba(102,126,234,0.2)',
+              borderColor: 'rgba(102,126,234,1)',
+              borderWidth: 2,
+              pointBackgroundColor: 'rgba(118,75,162,1)',
+              pointRadius: 5
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+              r: {
+                beginAtZero: true, max: 100,
+                grid: { color: 'rgba(255,255,255,0.07)' },
+                angleLines: { color: 'rgba(255,255,255,0.07)' },
+                pointLabels: { color: '#b0b0c0', font: { family: 'Poppins', size: 11 } },
+                ticks: { color: '#b0b0c0', backdropColor: 'transparent', stepSize: 25 }
+              }
+            },
+            plugins: {
+              legend: baseLegend,
+              tooltip: {
+                callbacks: { label: ctx => ' ' + ctx.parsed.r.toFixed(1) + '%' }
+              }
+            },
+            animation: { duration: 1400, easing: 'easeInOutQuart' }
+          }
+        });
+      }
+
+      /* ── Feature/accuracy progress bars ── */
+      (function buildBars() {
+        const wrap = document.getElementById('featureBars');
+        if (!wrap || !accLabels.length) return;
+        const maxVal = Math.max(...accValues);
+        accLabels.forEach((label, i) => {
+          const pct = accValues[i] || 0;
+          const width = maxVal > 0 ? ((pct / maxVal) * 100).toFixed(1) : 0;
+          wrap.innerHTML += `
+            <div class="feature-bar-wrap">
+              <div class="feature-bar-label"><span>${label}</span><span>${pct.toFixed(1)}%</span></div>
+              <div class="feature-bar-bg">
+                <div class="feature-bar-fill" style="width:${width}%"></div>
+              </div>
+            </div>`;
+        });
+      })();
     </script>
   </body>
 </html>

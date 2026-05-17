@@ -257,12 +257,12 @@
           <div class="form-grid">
             <div class="form-group">
               <label>Age</label>
-              <input type="number" name="age" min="1" max="120" />
+              <input type="number" name="age" min="1" max="120" required />
             </div>
 
             <div class="form-group">
               <label>Gender</label>
-              <select name="sex">
+              <select name="sex" required>
                 <option value="">Select</option>
                 <option value="1">Male</option>
                 <option value="0">Female</option>
@@ -271,7 +271,7 @@
 
             <div class="form-group">
               <label>Chest Pain Type</label>
-              <select name="cp">
+              <select name="cp" required>
                 <option value="0">Asymptomatic</option>
                 <option value="1">Atypical Angina</option>
                 <option value="2">Non-Anginal Pain</option>
@@ -281,17 +281,17 @@
 
             <div class="form-group">
               <label>Resting Blood Pressure</label>
-              <input type="number" name="trestbps" min="80" max="250" />
+              <input type="number" name="trestbps" min="80" max="250" required />
             </div>
 
             <div class="form-group">
               <label>Cholesterol</label>
-              <input type="number" name="chol" min="100" max="600" />
+              <input type="number" name="chol" min="100" max="600" required />
             </div>
 
             <div class="form-group">
               <label>Fasting Blood Sugar &gt; 120 mg/dl</label>
-              <select name="fbs">
+              <select name="fbs" required>
                 <option value="0">No</option>
                 <option value="1">Yes</option>
               </select>
@@ -299,7 +299,7 @@
 
             <div class="form-group">
               <label>Resting ECG</label>
-              <select name="restecg">
+              <select name="restecg" required>
                 <option value="0">Normal</option>
                 <option value="1">ST-T Abnormality</option>
                 <option value="2">LV Hypertrophy</option>
@@ -308,12 +308,12 @@
 
             <div class="form-group">
               <label>Maximum Heart Rate</label>
-              <input type="number" name="thalach" min="60" max="250" />
+              <input type="number" name="thalach" min="60" max="250" required />
             </div>
 
             <div class="form-group">
               <label>Exercise Induced Angina</label>
-              <select name="exang">
+              <select name="exang" required>
                 <option value="0">No</option>
                 <option value="1">Yes</option>
               </select>
@@ -321,12 +321,19 @@
 
             <div class="form-group">
               <label>ST Depression</label>
-              <input type="number" step="0.1" name="oldpeak" min="0" max="10" />
+              <input
+                type="number"
+                step="0.1"
+                name="oldpeak"
+                min="0"
+                max="10"
+                required
+              />
             </div>
 
             <div class="form-group">
               <label>ST Slope</label>
-              <select name="slope">
+              <select name="slope" required>
                 <option value="0">Downsloping</option>
                 <option value="1">Flat</option>
                 <option value="2">Upsloping</option>
@@ -335,7 +342,7 @@
 
             <div class="form-group">
               <label>Major Vessels</label>
-              <select name="ca">
+              <select name="ca" required>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -345,7 +352,7 @@
 
             <div class="form-group">
               <label>Thalassemia</label>
-              <select name="thal">
+              <select name="thal" required>
                 <option value="1">Normal</option>
                 <option value="2">Fixed Defect</option>
                 <option value="3">Reversible Defect</option>
@@ -368,7 +375,7 @@
       <div class="tab-panel" id="tab-file">
         <form action="/predict" method="POST" enctype="multipart/form-data">
           <div class="upload-section">
-            <input type="file" name="report_file" accept=".csv,.txt" />
+            <input type="file" name="report_file" accept=".csv,.txt" required />
             <p class="hint">
               You can upload a .csv or .txt report file with patient details.
             </p>
@@ -394,6 +401,7 @@
               type="file"
               name="report_file"
               accept=".csv,.txt,.png,.jpg,.jpeg,.pdf"
+              required
             />
             <p class="hint">Upload an ECG report file for analysis.</p>
 
@@ -401,7 +409,7 @@
             <button
               type="submit"
               name="action"
-              value="file"
+              value="ecg"
               class="predict-btn"
               style="grid-column: unset; margin-top: 0"
             >
@@ -409,6 +417,63 @@
             </button>
           </div>
         </form>
+      </div>
+      <div class="advice-panel">
+        <div class="advice-heading">About the Parameters</div>
+
+        <ul class="param-list">
+          <li>
+            <strong>Age:</strong> Age of the patient. Heart disease risk often
+            increases as age increases.
+          </li>
+          <li>
+            <strong>Sex:</strong> Biological sex can affect heart disease risk
+            patterns and screening needs.
+          </li>
+          <li>
+            <strong>Chest Pain Type:</strong> Helps identify whether chest pain
+            may be related to heart problems.
+          </li>
+          <li>
+            <strong>Resting Blood Pressure:</strong> High blood pressure makes
+            the heart work harder and increases heart risk.
+          </li>
+          <li>
+            <strong>Cholesterol:</strong> High cholesterol can build plaque in
+            arteries and reduce blood flow.
+          </li>
+          <li>
+            <strong>Fasting Blood Sugar:</strong> High sugar may indicate
+            diabetes risk, which can increase heart disease risk.
+          </li>
+          <li>
+            <strong>Resting ECG:</strong> Shows the heart's electrical activity
+            and may reveal abnormalities.
+          </li>
+          <li>
+            <strong>Maximum Heart Rate:</strong> Shows heart response during
+            activity or exercise testing.
+          </li>
+          <li>
+            <strong>Exercise Induced Angina:</strong> Chest pain during exercise
+            can be an important warning sign.
+          </li>
+          <li>
+            <strong>Oldpeak:</strong> ST depression value that can show stress
+            on the heart during exercise.
+          </li>
+          <li>
+            <strong>Slope:</strong> Describes the slope of the ST segment during
+            exercise testing.
+          </li>
+          <li>
+            <strong>CA:</strong> Number of major vessels detected in the test.
+          </li>
+          <li>
+            <strong>Thal:</strong> Thalassemia or thal test result used in heart
+            disease prediction.
+          </li>
+        </ul>
       </div>
 
       <p class="disclaimer">
